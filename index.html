@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e14">
+<title>🏴󠁥󠁳󠁣󠁴󠁿 7-0: Volta a Catalunya Draft — Can You Win the Senyera?</title>
+<meta name="description" content="Draft legendary Volta a Catalunya cyclists across 6 eras and try to win every stage in an 7-stage Volta a Catalunya. 84 legends. 6 eras. 7 stages. 1 goal: 7-0.">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #141a24;
+    --panel2: #1c2330;
+    --border: #2a3344;
+    --text: #e8eef5;
+    --muted: #8a96a8;
+    --accent: #dc2626;          /* Senyera red */
+    --accent2: #f59e0b;         /* Deep blood red */
+    --good: #4ade80;
+    --bad: #f87171;
+    --gold: #fbbf24;
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(220,38,38,0.10), transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, #1a0808 100%);
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  header {
+    text-align: center;
+    padding: 20px 0 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  header h1 {
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  header .tagline {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--panel);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    min-width: 70px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 10px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+  }
+  .tab:not(.active):hover {
+    color: var(--text);
+    background: var(--panel2);
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .stat .v {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--accent2);
+  }
+  .stat .l {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .era-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-right: 4px;
+  }
+  .driver-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    gap: 8px;
+  }
+  .driver-card {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    user-select: none;
+  }
+  .driver-card:hover:not(.drafted):not(.disabled) {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220,38,38,0.25);
+  }
+  .driver-card.drafted {
+    background: var(--accent);
+    border-color: var(--accent2);
+    color: #000;
+    cursor: default;
+    opacity: 0.85;
+  }
+  .driver-card.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .driver-card .ovr {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    color: var(--accent2);
+    background: rgba(0,0,0,0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .driver-card.drafted .ovr {
+    background: rgba(255,255,255,0.3);
+    color: #000;
+  }
+  .driver-card .name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    margin-right: 28px;
+  }
+  .driver-card .team {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.1;
+  }
+  .driver-card.drafted .team {
+    color: rgba(0,0,0,0.7);
+  }
+  .driver-card .era-mini {
+    font-size: 9px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .draft-status {
+    background: linear-gradient(135deg, var(--panel2) 0%, var(--panel) 100%);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .draft-status.full {
+    border-style: solid;
+    border-color: var(--accent);
+  }
+  .draft-status .count {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .draft-status .help {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 800;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--accent2);
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--border);
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn-row .btn { flex: 1; }
+  .race-log {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 12px 0;
+    padding: 4px;
+  }
+  .race-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    background: var(--panel2);
+    border-left: 4px solid var(--border);
+    font-size: 13px;
+  }
+  .race-row.win {
+    border-left-color: var(--good);
+    background: rgba(74, 222, 128, 0.08);
+  }
+  .race-row.loss {
+    border-left-color: var(--bad);
+    background: rgba(248, 113, 113, 0.08);
+  }
+  .race-row.rest {
+    border-left-color: var(--muted);
+    background: rgba(138, 150, 168, 0.08);
+    opacity: 0.7;
+  }
+  .race-num {
+    width: 36px;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .race-name {
+    flex: 1;
+    font-weight: 600;
+  }
+  .race-result {
+    width: 80px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .race-row.win .race-result { color: var(--good); }
+  .race-row.loss .race-result { color: var(--bad); }
+  .race-pts {
+    width: 50px;
+    text-align: right;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .finale {
+    text-align: center;
+    padding: 30px 16px;
+  }
+  .finale .big {
+    font-size: clamp(40px, 9vw, 64px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .finale .sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    margin: 4px;
+  }
+  .badge.gold {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #000;
+    border-color: #f59e0b;
+  }
+  .badge.green {
+    background: rgba(74, 222, 128, 0.2);
+    color: var(--good);
+    border-color: var(--good);
+  }
+  .badge.red {
+    background: rgba(248, 113, 113, 0.2);
+    color: var(--bad);
+    border-color: var(--bad);
+  }
+  .share-card {
+    background: var(--panel2);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+  }
+  .share-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+  .share-card .record {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--accent2);
+    font-family: "Courier New", monospace;
+    letter-spacing: 0.05em;
+  }
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 20px 0 30px;
+    border-top: 1px solid var(--border);
+    margin-top: 30px;
+  }
+  .podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .podium-place {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+    flex: 1;
+  }
+  .podium-place .pos {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .podium-place .nm {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .podium-place .pts {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent2);
+  }
+  .podium-place.first {
+    border-color: var(--gold);
+    background: rgba(251, 191, 36, 0.1);
+    transform: translateY(-8px);
+  }
+  .podium-place.first .pts { color: var(--gold); }
+  details {
+    margin: 12px 0;
+  }
+  details summary {
+    cursor: pointer;
+    padding: 8px;
+    background: var(--panel2);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  details[open] summary {
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .roster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px;
+  }
+  .roster-chip {
+    background: var(--accent);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .driver-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🏴󠁥󠁳󠁣󠁴󠁿 7-0: Volta a Catalunya Draft</h1>
+    <div class="tagline">Draft legends. Race 7 stages. Win all. Wear the <em>Senyera</em>.</div>
+  </header>
+
+  <!-- DRAFT SCREEN -->
+  <div id="screen-draft">
+    <div class="stats">
+      <div class="stat"><div class="v" id="stat-picked">0</div><div class="l">Picked</div></div>
+      <div class="stat"><div class="v">5</div><div class="l">Needed</div></div>
+      <div class="stat"><div class="v" id="stat-avg">—</div><div class="l">Avg OVR</div></div>
+      <div class="stat"><div class="v">7</div><div class="l">Stages</div></div>
+    </div>
+
+    <div class="draft-status" id="draft-status">
+      <div class="count" id="count-text">Pick 5 Volta a Catalunya legends</div>
+      <div class="help" id="help-text">Tap a driver to draft. Mix eras for synergy bonuses.</div>
+    </div>
+
+    <div class="tabs" id="era-tabs"></div>
+
+    <div class="panel">
+      <div class="driver-grid" id="driver-grid"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="reset-btn">Reset Draft</button>
+      <button class="btn" id="start-btn" disabled>Start Season →</button>
+    </div>
+  </div>
+
+  <!-- SEASON SCREEN -->
+  <div id="screen-season" hidden>
+    <div class="stats">
+      <div class="stat"><div class="v" id="season-wins">0</div><div class="l">Wins</div></div>
+      <div class="stat"><div class="v" id="season-streak">0</div><div class="l">Streak</div></div>
+      <div class="stat"><div class="v" id="season-points">0</div><div class="l">Points</div></div>
+      <div class="stat"><div class="v" id="season-race-num">1</div><div class="l">Race</div></div>
+    </div>
+
+    <div class="panel" id="race-panel">
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:11px; color:var(--muted); letter-spacing:0.1em; margin-bottom:6px;">STAGE <span id="race-counter">1</span> OF 7</div>
+        <div id="race-title" style="font-size:22px; font-weight:900; color:var(--accent2); margin-bottom:4px;">—</div>
+        <div id="race-track" style="font-size:13px; color:var(--muted); margin-bottom:16px;">—</div>
+        <button class="btn" id="race-btn">▶ Simulate Race</button>
+        <div class="btn-row" id="race-next-row" hidden>
+          <button class="btn btn-secondary" id="race-detail-btn">📊 Race Detail</button>
+          <button class="btn" id="race-next-btn">Next Race →</button>
+        </div>
+      </div>
+      <div id="race-detail" hidden></div>
+    </div>
+
+    <details>
+      <summary>📜 Season Log</summary>
+      <div class="race-log" id="race-log"></div>
+    </details>
+  </div>
+
+  <!-- FINALE SCREEN -->
+  <div id="screen-finale" hidden>
+    <div class="finale">
+      <div class="big" id="finale-record">—</div>
+      <div class="sub" id="finale-title">—</div>
+      <div id="finale-badges" style="margin-bottom:20px;"></div>
+
+      <div class="share-card">
+        <div class="label">SHARE YOUR SEASON</div>
+        <div class="record" id="share-record">—</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:6px;">#VoltaCatalunya8Zero #VoltaCatalunya #VC</div>
+      </div>
+
+      <details>
+        <summary>🏆 Final Standings</summary>
+        <div class="podium" id="podium"></div>
+        <div id="full-standings"></div>
+      </details>
+
+      <details>
+        <summary>📜 Full Season Log (All 21 Stages)</summary>
+        <div class="race-log" id="finale-log"></div>
+      </details>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="replay-btn">🔄 New Season</button>
+        <button class="btn" id="share-btn">📋 Copy Share Text</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made for 🏴󠁥󠁳󠁣󠁴󠁿 Volta a Catalunya fans · 84 legends · 6 eras · 7 stages · 1 dream: the <em>Senyera</em><br>
+    A tribute to the <a href="https://github.com/TeapoyY/squad-draft-football" style="color:var(--accent);">37-0</a>,
+    <a href="https://github.com/TeapoyY/nascar-36-draft" style="color:var(--accent);">36-0</a>,
+    <a href="https://github.com/TeapoyY/tour-de-france-21-draft" style="color:var(--accent);">7-0</a>,
+    <a href="https://github.com/TeapoyY/indycar-17-draft" style="color:var(--accent);">17-0</a>,
+    <a href="https://github.com/TeapoyY/formulae-17-draft" style="color:var(--accent);">17-0 ⚡</a>,
+    <a href="https://github.com/TeapoyY/motogp-20-draft" style="color:var(--accent);">20-0 🏍️</a>,
+    <a href="https://github.com/TeapoyY/endurance-24-draft" style="color:var(--accent);">24-0 🏁</a>,
+    <a href="https://github.com/TeapoyY/wrc-13-draft" style="color:var(--accent);">13-0 🏔️</a>,
+    <a href="https://github.com/TeapoyY/giro-23-draft" style="color:var(--accent);">23-0 🌹</a>,
+    <a href="https://github.com/TeapoyY/critérium du dauphiné-21-draft" style="color:var(--accent);">7-0 🔴</a> drafting lineage.
+  </div>
+</div>
+
+<script>
+// ==========================================
+// Volta a Catalunya 7-0: Single HTML MVP — X-0 Sports Draft template #12
+// 84 legends across 6 eras · 7 stages (no rest) · 5 cyclist draft
+// Reuses the X-0 Sports template proven by
+// NFL 37-0 (7/30), F1 24-0 (8/1), NASCAR 36-0 (8/17), NASCAR Truck 24-0 (8/21),
+// Tirreno-Adriatico 7-0 (9/16)  <-  CdD was 9/10 #14
+// ==========================================
+
+// --- SEEDED RNG ---
+function mulberry32(s) {
+    return function() {
+        s |= 0; s = (s + 0x6D2B79F5) | 0;
+        let t = Math.imul(s ^ (s >>> 15), 1 | s);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+// --- VOLTA A CATALUNYA CYCLISTS (84 legends across 6 eras) ---
+// OVR: 70-99 scale. Focus: Volta a Catalunya winners + climbers + Senyera legacy
+
+const DRIVERS = [
+// Era 1: 1911-1959 (founding era)
+    { name: "Mariano Cañardo", era: 1, pos: "CLIM", ovr: 92 },
+    { name: "Guillermo Timoner", era: 1, pos: "HILL", ovr: 78 },
+    { name: "José Beyaert", era: 1, pos: "GC", ovr: 82 },
+    { name: "Aniceto Utset", era: 1, pos: "SPR", ovr: 75 },
+    { name: "Miguel Poblet", era: 1, pos: "SPR", ovr: 86 },
+    { name: "Federico Bahamontes", era: 1, pos: "CLIM", ovr: 91 },
+    { name: "Antoni Gelabert", era: 1, pos: "HILL", ovr: 80 },
+    { name: "Salvador Botella", era: 1, pos: "CLIM", ovr: 84 },
+    { name: "Gabriel Saura", era: 1, pos: "SPR", ovr: 73 },
+    { name: "José Gil", era: 1, pos: "HILL", ovr: 76 },
+    { name: "Jesús Loroño", era: 1, pos: "CLIM", ovr: 85 },
+    { name: "Raymond Poulidor", era: 1, pos: "GC", ovr: 92 },
+    { name: "Jacques Anquetil", era: 1, pos: "TT", ovr: 95 },
+    { name: "Luis Otaño", era: 1, pos: "HILL", ovr: 78 },
+// Era 2: 1960-1979 (Spanish golden era)
+    { name: "Luis Puig", era: 2, pos: "HILL", ovr: 86 },
+    { name: "José Pesarrodona", era: 2, pos: "CLIM", ovr: 87 },
+    { name: "Gregorio San Miguel", era: 2, pos: "CLIM", ovr: 90 },
+    { name: "Luis Ocaña", era: 2, pos: "CLIM", ovr: 93 },
+    { name: "Domingo Perurena", era: 2, pos: "GC", ovr: 91 },
+    { name: "José Manuel Fuente", era: 2, pos: "CLIM", ovr: 94 },
+    { name: "Eddy Merckx", era: 2, pos: "GC", ovr: 99 },
+    { name: "Felice Gimondi", era: 2, pos: "GC", ovr: 93 },
+    { name: "Roger De Vlaeminck", era: 2, pos: "COBB", ovr: 92 },
+    { name: "Rik Van Looy", era: 2, pos: "SPR", ovr: 91 },
+    { name: "Joop Zoetemelk", era: 2, pos: "GC", ovr: 89 },
+    { name: "Agustín Tamames", era: 2, pos: "HILL", ovr: 88 },
+    { name: "Francisco Galdos", era: 2, pos: "HILL", ovr: 84 },
+    { name: "Andrés Oliva", era: 2, pos: "SPR", ovr: 80 },
+// Era 3: 1980-1999 (modern era)
+    { name: "Marino Lejarreta", era: 3, pos: "GC", ovr: 93 },
+    { name: "Pedro Delgado", era: 3, pos: "CLIM", ovr: 95 },
+    { name: "Miguel Indurain", era: 3, pos: "TT", ovr: 99 },
+    { name: "Tony Rominger", era: 3, pos: "TT", ovr: 90 },
+    { name: "Alberto Fernández", era: 3, pos: "HILL", ovr: 85 },
+    { name: "Laudelino Cubino", era: 3, pos: "CLIM", ovr: 91 },
+    { name: "Herminio Díaz Zabala", era: 3, pos: "HILL", ovr: 83 },
+    { name: "Fernando Escartín", era: 3, pos: "CLIM", ovr: 91 },
+    { name: "Roberto Heras", era: 3, pos: "CLIM", ovr: 92 },
+    { name: "Iban Mayo", era: 3, pos: "CLIM", ovr: 88 },
+    { name: "Aitor González", era: 3, pos: "GC", ovr: 87 },
+    { name: "Óscar Sevilla", era: 3, pos: "GC", ovr: 86 },
+    { name: "Constantino Zaballa", era: 3, pos: "HILL", ovr: 82 },
+    { name: "David Etxebarria", era: 3, pos: "HILL", ovr: 84 },
+// Era 4: 2000-2009 (international era)
+    { name: "Lance Armstrong", era: 4, pos: "CLIM", ovr: 95 },
+    { name: "Jan Ullrich", era: 4, pos: "TT", ovr: 94 },
+    { name: "Alejandro Valverde", era: 4, pos: "GC", ovr: 95 },
+    { name: "Samuel Sánchez", era: 4, pos: "HILL", ovr: 91 },
+    { name: "Denis Menchov", era: 4, pos: "GC", ovr: 90 },
+    { name: "Cadel Evans", era: 4, pos: "GC", ovr: 90 },
+    { name: "Davit Monreal", era: 4, pos: "SPR", ovr: 78 },
+    { name: "Juan Antonio Flecha", era: 4, pos: "HILL", ovr: 86 },
+    { name: "Carlos Sastre", era: 4, pos: "CLIM", ovr: 92 },
+    { name: "Levi Leipheimer", era: 4, pos: "TT", ovr: 89 },
+    { name: "Michael Rogers", era: 4, pos: "TT", ovr: 86 },
+    { name: "Andreas Klöden", era: 4, pos: "GC", ovr: 88 },
+    { name: "José Azevedo", era: 4, pos: "HILL", ovr: 84 },
+    { name: "Haimar Zubeldia", era: 4, pos: "HILL", ovr: 86 },
+// Era 5: 2010-2019 (modern Contador era)
+    { name: "Alberto Contador", era: 5, pos: "CLIM", ovr: 98 },
+    { name: "Chris Froome", era: 5, pos: "CLIM", ovr: 96 },
+    { name: "Joaquim Rodríguez", era: 5, pos: "HILL", ovr: 94 },
+    { name: "Nairo Quintana", era: 5, pos: "CLIM", ovr: 93 },
+    { name: "Rui Costa", era: 5, pos: "HILL", ovr: 89 },
+    { name: "Marc Soler", era: 5, pos: "HILL", ovr: 87 },
+    { name: "Adam Yates", era: 5, pos: "GC", ovr: 90 },
+    { name: "Simon Yates", era: 5, pos: "GC", ovr: 91 },
+    { name: "Thibaut Pinot", era: 5, pos: "CLIM", ovr: 90 },
+    { name: "Rafal Majka", era: 5, pos: "CLIM", ovr: 89 },
+    { name: "Bauke Mollema", era: 5, pos: "GC", ovr: 88 },
+    { name: "Rigoberto Urán", era: 5, pos: "HILL", ovr: 87 },
+    { name: "Tejay van Garderen", era: 5, pos: "GC", ovr: 86 },
+    { name: "Daniel Martin", era: 5, pos: "HILL", ovr: 88 },
+// Era 6: 2020-present (current era)
+    { name: "Tadej Pogačar", era: 6, pos: "GC", ovr: 99 },
+    { name: "Jonas Vingegaard", era: 6, pos: "GC", ovr: 96 },
+    { name: "Remco Evenepoel", era: 6, pos: "TT", ovr: 95 },
+    { name: "Primož Roglič", era: 6, pos: "GC", ovr: 94 },
+    { name: "Juan Ayuso", era: 6, pos: "GC", ovr: 89 },
+    { name: "Enric Mas", era: 6, pos: "CLIM", ovr: 91 },
+    { name: "Carlos Rodríguez", era: 6, pos: "HILL", ovr: 88 },
+    { name: "Lenny Martínez", era: 6, pos: "CLIM", ovr: 87 },
+    { name: "Santiago Buitrago", era: 6, pos: "HILL", ovr: 86 },
+    { name: "Mattias Skjelmose", era: 6, pos: "GC", ovr: 88 },
+    { name: "Sepp Kuss", era: 6, pos: "CLIM", ovr: 87 },
+    { name: "Egan Bernal", era: 6, pos: "CLIM", ovr: 89 },
+    { name: "Geraint Thomas", era: 6, pos: "GC", ovr: 88 },
+    { name: "Richard Carapaz", era: 6, pos: "CLIM", ovr: 91 }
+];
+
+const ERA_NAMES = {
+    1: "1933-1959",
+    2: "1960-1979",
+    3: "1980-1999",
+    4: "2000-2009",
+    5: "2010-2019",
+    6: "2020s"
+};
+
+const ERA_LABELS = {
+    1: "11-59",
+    2: "60-79",
+    3: "80-99",
+    4: "00-09",
+    5: "10-19",
+    6: "20-now"
+};
+
+// Realistic 2026 Volta a Catalunya calendar (7 stages, ITT-heavy opener + Alpine finale)
+// Stage types: 2 ITT + 1 flat + 2 hills + 3 mountain. No rest days. Tour of Catalonia!
+// Note: No rest days. Standard 21-1 GC points. Win all 8 = 7-0 (Volta Ciclista a Catalunya complete)
+
+const SCHEDULE = [
+{ stage: 1, name: "Barcelona Prologue", type: "ITT", desc: "8km urban TT along the Mediterranean" },
+    { stage: 2, name: "Mataró Sprint", type: "flat", desc: "Catalan coastline, bunch sprint expected" },
+    { stage: 3, name: "Montserrat Foothills", type: "hills", desc: "Holy mountain rollers, GC shake-up" },
+    { stage: 4, name: "La Molina", type: "mountain", desc: "Pyrenean summit finish, category-1 climb" },
+    { stage: 5, name: "Andorra la Vella", type: "mountain", desc: "Cross-border Pyrenees, GC battle" },
+    { stage: 6, name: "Vallter 2000", type: "mountain", desc: "Eastern Pyrenees HC climb, queen stage" },
+    { stage: 7, name: "Barcelona Montjuïc", type: "hills", desc: "Urban circuit finale, hilly circuits" }
+];
+
+// AI riders weighted around OVR 80-90
+function genAI() {
+    const r = Math.random;
+    return Math.floor(82 + r() * 8);  // 82-89 range
+}
+
+// --- GAME STATE ---
+let state = {
+    phase: 'draft',  // draft / season / finale
+    drafted: [],
+    selectedEra: 1,
+    season: null,
+    rng: null,
+    seed: 0
+};
+
+// --- WIN PROBABILITY ---
+// Reuses the F1 24-0 + NFL 37-0 calibrated formula
+function winProb(ovr, raceType, isSuperspeedway) {
+    // Base: 0.05 to 0.95 based on OVR
+    let base = Math.min(0.95, Math.max(0.05, (ovr - 70) / 30));
+
+    // Track-type bonuses (Volta a Catalunya: 7 stages, mountain-heavy with ITT finale setup)
+    const bonuses = {
+        'flat':     0.00,    // mass sprint - high chaos, pure speed matters
+        'hills':   -0.02,    // punchy climbs favor puncheurs
+        'mountain': -0.03,    // GC climbers dominate - low chaos
+        'itt':      0.02,    // time trial - pure engine, lowest chaos
+        'cobbles': -0.05,    // pavé chaos, punctures, luck
+        'rest':    -0.99     // rest day = no race
+    };
+    base += (bonuses[raceType] || 0);
+
+    return Math.min(0.97, Math.max(0.03, base));
+}
+
+// --- ERA SYNERGY BONUS ---
+// Picking drivers from same team or same era gives small bonus
+function eraSynergy(drafted) {
+    const eras = drafted.map(d => d.era);
+    const eraCounts = {};
+    eras.forEach(e => eraCounts[e] = (eraCounts[e] || 0) + 1);
+    const maxCount = Math.max(...Object.values(eraCounts));
+    // +1.5 OVR for each extra driver from same era beyond the first
+    return (maxCount - 1) * 1.5;
+}
+
+// --- SIMULATE A SINGLE RACE ---
+function simulateRace(playerOVR, raceType, rng) {
+    // Rest day: no race, return finish as P1 with bonus
+    if (raceType === 'rest') {
+        return { playerPos: 1, field: [], isRest: true };
+    }
+
+    // Generate AI field of 80 other riders with realistic OVR distribution
+    const field = [];
+    for (let i = 0; i < 80; i++) {
+        // AI riders weighted around OVR 80-90
+        const aiOVR = 84 + Math.floor(rng() * 11);
+        field.push({ name: `Rider ${i+2}`, ovr: aiOVR, type: raceType });
+    }
+
+    // Add player
+    field.push({ name: 'YOU', ovr: playerOVR, type: raceType, isPlayer: true });
+
+    // Each car: simulate a continuous score based on OVR + variance
+    // Continuous scoring ensures the best OVR reliably finishes at the top,
+    // not randomly tied with low-OVR AI cars that happened to roll 1 on a binary coin
+    field.forEach(car => {
+        const prob = winProb(car.ovr, raceType);
+        // Variance: ±10% per race
+        const variance = (rng() - 0.5) * 0.20;
+        const adjusted = Math.min(0.97, Math.max(0.03, prob + variance));
+        // Use a continuous noise term as score
+        car.score = adjusted + (rng() - 0.5) * 0.20;
+    });
+
+    // Add oval pack-racing chaos (drafting can upset strong cars)
+    if (raceType === 'oval') {
+        field.forEach(car => {
+            if (!car.isPlayer && car.ovr < 85) {
+                car.score += rng() * 0.22;  // more chaos
+            }
+        });
+    }
+
+    // Sort by score, get player's position
+    field.sort((a, b) => b.score - a.score);
+    const playerPos = field.findIndex(c => c.isPlayer) + 1;
+    return { playerPos, field };
+}
+
+// --- POINTS CALCULATION (Volta a Catalunya GC: 21-1 system, top 15 score) ---
+function pointsForPos(pos, raceIdx) {
+    // Volta a Catalunya GC: 21-1 points system (1st=21, 21st=1)
+    // Top 21 stage finishers score GC points
+    // No double points at any stage
+    const POINTS = [21, 18, 15, 13, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1];
+    if (pos < 1 || pos > POINTS.length) return 0;
+    return POINTS[pos - 1];
+}
+
+// --- UI HELPERS ---
+function $(id) { return document.getElementById(id); }
+function show(id) { $(id).hidden = false; }
+function hide(id) { $(id).hidden = true; }
+
+function switchScreen(name) {
+    hide('screen-draft');
+    hide('screen-season');
+    hide('screen-finale');
+    show(`screen-${name}`);
+    state.phase = name;
+}
+
+// --- ERA TABS RENDER ---
+function renderTabs() {
+    const tabs = $('era-tabs');
+    tabs.innerHTML = '';
+    for (let era = 1; era <= 6; era++) {
+        const btn = document.createElement('button');
+        btn.className = 'tab' + (era === state.selectedEra ? ' active' : '');
+        btn.textContent = ERA_LABELS[era];
+        btn.onclick = () => {
+            state.selectedEra = era;
+            renderTabs();
+            renderDrivers();
+        };
+        tabs.appendChild(btn);
+    }
+}
+
+// --- DRIVERS RENDER ---
+function renderDrivers() {
+    const grid = $('driver-grid');
+    grid.innerHTML = '';
+    const drivers = DRIVERS.filter(d => d.era === state.selectedEra);
+    drivers.forEach(d => {
+        const drafted = state.drafted.some(x => x.id === d.id);
+        const card = document.createElement('div');
+        card.className = 'driver-card' + (drafted ? ' drafted' : '');
+        card.innerHTML = `
+            <div class="ovr">${d.ovr}</div>
+            <div class="name">${d.name}</div>
+            <div class="team">${d.team}</div>
+        `;
+        if (!drafted) {
+            card.onclick = () => draftDriver(d);
+        }
+        grid.appendChild(card);
+    });
+}
+
+// --- DRAFT LOGIC ---
+function draftDriver(d) {
+    if (state.drafted.length >= 5) return;
+    if (state.drafted.some(x => x.id === d.id)) return;
+    state.drafted.push(d);
+    updateDraftUI();
+    renderDrivers();
+}
+
+function undraftDriver(id) {
+    state.drafted = state.drafted.filter(d => d.id !== id);
+    updateDraftUI();
+    renderDrivers();
+}
+
+function updateDraftUI() {
+    const n = state.drafted.length;
+    $('stat-picked').textContent = n;
+    if (n > 0) {
+        const avg = (state.drafted.reduce((s, d) => s + d.ovr, 0) / n + eraSynergy(state.drafted)).toFixed(0);
+        $('stat-avg').textContent = avg;
+    } else {
+        $('stat-avg').textContent = '—';
+    }
+
+    const status = $('draft-status');
+    const countText = $('count-text');
+    const helpText = $('help-text');
+    if (n === 0) {
+        countText.textContent = 'Pick 5 Volta a Catalunya legends';
+        helpText.textContent = 'Tap a driver to draft. Mix eras for synergy bonuses.';
+        status.classList.remove('full');
+    } else if (n < 6) {
+        countText.textContent = `${n}/5 drivers drafted`;
+        helpText.textContent = `Pick ${6 - n} more. Avg OVR: ${$('stat-avg').textContent}`;
+        status.classList.remove('full');
+    } else {
+        countText.textContent = '🏎️ Roster Complete!';
+        helpText.textContent = `Avg OVR: ${$('stat-avg').textContent} (incl +${eraSynergy(state.drafted).toFixed(1)} era synergy)`;
+        status.classList.add('full');
+    }
+
+    // Show chips
+    const existingChips = status.querySelectorAll('.roster-chip');
+    existingChips.forEach(c => c.remove());
+    if (n > 0) {
+        const rosterDiv = document.createElement('div');
+        rosterDiv.className = 'roster';
+        rosterDiv.style.marginTop = '10px';
+        state.drafted.forEach(d => {
+            const chip = document.createElement('span');
+            chip.className = 'roster-chip';
+            chip.textContent = `${d.name} ${d.ovr}`;
+            chip.onclick = () => undraftDriver(d.id);
+            chip.style.cursor = 'pointer';
+            chip.title = 'Tap to remove';
+            rosterDiv.appendChild(chip);
+        });
+        status.appendChild(rosterDiv);
+    }
+
+    $('start-btn').disabled = n !== 5;
+}
+
+// --- RESET ---
+$('reset-btn').onclick = () => {
+    state.drafted = [];
+    updateDraftUI();
+    renderDrivers();
+};
+
+// --- START SEASON ---
+$('start-btn').onclick = () => {
+    // Pick highest-OVR drafted driver as primary; pool all 6 for variation
+    state.seed = Date.now();
+    state.rng = mulberry32(state.seed);
+    state.season = {
+        results: [],  // [{ race, name, pos, points }]
+        standings: {},  // driver.id -> total points
+        playerWins: 0,
+        bestStreak: 0,
+        currentStreak: 0,
+        primaryDriver: state.drafted.sort((a, b) => b.ovr - a.ovr)[0],
+        allDrafted: state.drafted
+    };
+    // Init standings
+    state.season.standings[state.season.primaryDriver.id] = 0;
+    state.drafted.forEach(d => state.season.standings[d.id] = 0);
+
+    switchScreen('season');
+    $('race-counter').textContent = '1';
+    $('race-counter-end') && ($('race-counter-end').textContent = '1');
+    showNextRace();
+};
+
+function showNextRace() {
+    const i = state.season.results.length;
+    if (i >= SCHEDULE.length) {
+        showFinale();
+        return;
+    }
+    const race = SCHEDULE[i];
+    $('race-counter').textContent = (i + 1);
+    $('season-race-num').textContent = (i + 1);
+    $('race-title').textContent = race.name;
+    $('race-track').textContent = `${race.city} · ${race.type}`;
+    show('race-btn');
+    hide('race-next-row');
+    hide('race-detail');
+}
+
+$('race-btn').onclick = () => {
+    const i = state.season.results.length;
+    const race = SCHEDULE[i];
+    // Player uses best drafted driver as primary; pool of 6 allows occasional rotation
+    // For simplicity: use primary driver for entire season
+    const playerOVR = state.season.primaryDriver.ovr + eraSynergy(state.season.allDrafted);
+    const result = simulateRace(playerOVR, race.type, state.rng);
+    const isRest = result.isRest === true;
+    const pts = isRest ? 0 : pointsForPos(result.playerPos, i);
+    const win = !isRest && result.playerPos === 1;
+    state.season.results.push({
+        race: i + 1,
+        name: race.name,
+        city: race.city || '',
+        type: race.type,
+        pos: isRest ? '—' : result.playerPos,
+        points: pts,
+        win: win,
+        isRest: isRest
+    });
+
+    // Update standings
+    state.season.standings[state.season.primaryDriver.id] += pts;
+
+    // Streak (rest days don't break streak but also don't increment it)
+    if (isRest) {
+        // rest day: no streak change
+    } else if (win) {
+        state.season.playerWins++;
+        state.season.currentStreak++;
+        if (state.season.currentStreak > state.season.bestStreak) {
+            state.season.bestStreak = state.season.currentStreak;
+        }
+    } else {
+        state.season.currentStreak = 0;
+    }
+
+    // Show race detail (top 5)
+    let detailHTML = '<div style="font-size:11px; color:var(--muted); letter-spacing:0.1em; margin-bottom:6px;">TOP 5 FINISH</div>';
+    result.field.slice(0, 5).forEach((car, idx) => {
+        const pos = idx + 1;
+        const isYou = car.isPlayer;
+        detailHTML += `<div class="race-row ${isYou ? 'win' : ''}" style="border-left-color:${isYou ? 'var(--accent2)' : 'var(--border)'}">
+            <div class="race-num">P${pos}</div>
+            <div class="race-name">${car.name}${isYou ? ' 🏁' : ''}</div>
+            <div class="race-result">OVR ${car.ovr}</div>
+        </div>`;
+    });
+    $('race-detail').innerHTML = detailHTML;
+
+    // Update season UI
+    $('season-wins').textContent = state.season.playerWins;
+    $('season-streak').textContent = state.season.currentStreak;
+    $('season-points').textContent = state.season.results.reduce((s, r) => s + r.points, 0);
+
+    // Update race log
+    const logRow = document.createElement('div');
+    logRow.className = `race-row ${win ? 'win' : 'loss'}`;
+    logRow.innerHTML = `
+        <div class="race-num">R${i + 1}</div>
+        <div class="race-name">${race.name}</div>
+        <div class="race-result">P${result.playerPos}${win ? ' 🏆' : ''}</div>
+        <div class="race-pts">+${pts}</div>
+    `;
+    $('race-log').prepend(logRow);
+
+    // Swap buttons
+    hide('race-btn');
+    show('race-next-row');
+    if (i >= SCHEDULE.length - 1) {
+        $('race-next-btn').textContent = 'See Final Standings →';
+    } else {
+        $('race-next-btn').textContent = 'Next Race →';
+    }
+};
+
+$('race-detail-btn').onclick = () => {
+    const d = $('race-detail');
+    if (d.hidden) show('race-detail');
+    else hide('race-detail');
+};
+
+$('race-next-btn').onclick = () => {
+    showNextRace();
+};
+
+// --- FINALE ---
+function showFinale() {
+    switchScreen('finale');
+    const wins = state.season.playerWins;
+    // Real stages: 7 stages total, no rest daysal race stages
+    // Player can win up to 20 stages (skips rest day). Perfect = "21-0" since the goal is to "complete the Tour undefeated" (rest day doesn't count as a loss)
+    const totalStages = SCHEDULE.length;
+    const losses = totalStages - 1 - wins;  // rest day is not a loss
+    const record = `${wins}-${losses}`;
+
+    $('finale-record').textContent = `${totalStages}-0`;  // Display as "21-0" perfect = "won every stage"
+    $('share-record').textContent = `${totalStages}-0`;
+
+    // Title
+    let title = '';
+    if (wins === 20) title = `🏆 UNDEFEATED — ${totalStages}-0 GRAND CHELEM!`;
+    else if (wins >= 17) title = `🏆 ELITE — ${wins} stage wins`;
+    else if (wins >= 14) title = `🏴󠁥󠁳󠁣󠁴󠁿 DOMINATOR — ${wins} stage wins`;
+    else if (wins >= 10) title = `🏔️ ALPINE — ${wins} stage wins`;
+    else title = `${wins} stage wins — Try a stronger roster next time`;
+    $('finale-title').textContent = title;
+
+    // Badges
+    let badgesHTML = '';
+    if (wins === 20) badgesHTML += '<span class="badge gold">⭐ Senyera Sweep — Volta Ciclista a Catalunya Complete</span>';
+    if (state.season.bestStreak >= 6) badgesHTML += `<span class="badge green">🔥 ${state.season.bestStreak}-Race Streak</span>`;
+    if (wins >= 13) badgesHTML += '<span class="badge green">Title Contender</span>';
+    if (wins < 6) badgesHTML += '<span class="badge red">Rebuild Year</span>';
+    $('finale-badges').innerHTML = badgesHTML;
+
+    // Podium (top 3 drafted drivers by points, but player = primary driver)
+    const podiumHTML = `
+        <div class="podium-place">
+            <div class="pos">YOUR #1</div>
+            <div class="nm">${state.season.primaryDriver.name}</div>
+            <div class="pts">${state.season.standings[state.season.primaryDriver.id]}</div>
+        </div>
+    `;
+    $('podium').innerHTML = podiumHTML;
+
+    // Full season log
+    $('finale-log').innerHTML = '';
+    state.season.results.forEach(r => {
+        const row = document.createElement('div');
+        row.className = `race-row ${r.isRest ? 'rest' : (r.win ? 'win' : 'loss')}`;
+        row.innerHTML = `
+            <div class="race-num">S${r.race}</div>
+            <div class="race-name">${r.name}${r.city ? ' — ' + r.city : ''}</div>
+            <div class="race-result">${r.isRest ? 'REST' : ('P' + r.pos + (r.win ? ' 🏆' : ''))}</div>
+            <div class="race-pts">${r.isRest ? '—' : '+' + r.points}</div>
+        `;
+        $('finale-log').appendChild(row);
+    });
+}
+
+$('replay-btn').onclick = () => {
+    state = { phase: 'draft', drafted: [], selectedEra: 1, season: null, rng: null, seed: 0 };
+    renderTabs();
+    renderDrivers();
+    updateDraftUI();
+    $('race-log').innerHTML = '';
+    switchScreen('draft');
+};
+
+$('share-btn').onclick = () => {
+    const text = `🏴󠁥󠁳󠁣󠁴󠁿 My Volta a Catalunya 7-0 season: ${$('share-record').textContent}\n` +
+                 `Cyclist: ${state.season.primaryDriver.name} (OVR ${state.season.primaryDriver.ovr})\n` +
+                 `Best Streak: ${state.season.bestStreak}\n` +
+                 `#VoltaCatalunya8Zero #VoltaCatalunya #VC`;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            $('share-btn').textContent = '✅ Copied!';
+            setTimeout(() => $('share-btn').textContent = '📋 Copy Share Text', 1500);
+        });
+    } else {
+        alert(text);
+    }
+};
+
+// --- INIT ---
+renderTabs();
+renderDrivers();
+updateDraftUI();
+</script>
+</body>
+</html>
