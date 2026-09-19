@@ -529,7 +529,7 @@
       <div class="share-card">
         <div class="label">SHARE YOUR SEASON</div>
         <div class="record" id="share-record">—</div>
-        <div style="font-size:11px; color:var(--muted); margin-top:6px;">#VoltaCatalunya8Zero #VoltaCatalunya #VC</div>
+        <div style="font-size:11px; color:var(--muted); margin-top:6px;">#VoltaCatalunya7Zero #VoltaCatalunya #VC</div>
       </div>
 
       <details>
@@ -539,7 +539,7 @@
       </details>
 
       <details>
-        <summary>📜 Full Season Log (All 21 Stages)</summary>
+        <summary>📜 Full Season Log (All 7 Stages)</summary>
         <div class="race-log" id="finale-log"></div>
       </details>
 
@@ -1069,11 +1069,11 @@ function showFinale() {
     // Real stages: 7 stages total, no rest daysal race stages
     // Player can win up to 20 stages (skips rest day). Perfect = "21-0" since the goal is to "complete the Tour undefeated" (rest day doesn't count as a loss)
     const totalStages = SCHEDULE.length;
-    const losses = totalStages - 1 - wins;  // rest day is not a loss
+    const losses = totalStages - wins;  // Volta has no rest days
     const record = `${wins}-${losses}`;
 
-    $('finale-record').textContent = `${totalStages}-0`;  // Display as "21-0" perfect = "won every stage"
-    $('share-record').textContent = `${totalStages}-0`;
+    $('finale-record').textContent = `${wins}-${losses}`;  // Show actual result for Volta (no rest days)
+    $('share-record').textContent = `${wins}-${losses}`;
 
     // Title
     let title = '';
@@ -1130,7 +1130,7 @@ $('share-btn').onclick = () => {
     const text = `🏴󠁥󠁳󠁣󠁴󠁿 My Volta a Catalunya 7-0 season: ${$('share-record').textContent}\n` +
                  `Cyclist: ${state.season.primaryDriver.name} (OVR ${state.season.primaryDriver.ovr})\n` +
                  `Best Streak: ${state.season.bestStreak}\n` +
-                 `#VoltaCatalunya8Zero #VoltaCatalunya #VC`;
+                 `#VoltaCatalunya7Zero #VoltaCatalunya #VC`;
     if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
             $('share-btn').textContent = '✅ Copied!';
